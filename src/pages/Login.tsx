@@ -1,102 +1,116 @@
-import axios from "axios";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import bgImage from "../assets/buku.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/login", {
+      const res = await axios.post("http://127.0.0.1:8000/api/login", {
         email,
         password,
       });
 
-      alert("Login berhasil!");
+      // simpan token
+      localStorage.setItem("token", res.data.token);
+
+      alert("Login berhasil ✅");
+
+      // pindah ke dashboard
+      navigate("/dashboard");
     } catch (err) {
-      alert("Login gagal!");
+      console.error(err);
+      alert("Login gagal ❌");
     }
   };
 
   return (
     <div style={styles.container}>
-      <form onSubmit={submit} style={styles.card}>
-        <h1 style={styles.title}>Welcome Back 👋</h1>
-        <p style={styles.subtitle}>Silakan login ke akun kamu</p>
+      <div style={styles.overlay}>
+        <form onSubmit={submit} style={styles.card}>
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            style={styles.backBtn}
+          >
+            ← Kembali
+          </button>
 
-        <div style={styles.inputGroup}>
-          <label>Email</label>
+          <h1 style={styles.title}>Welcome Back 👋</h1>
+
           <input
+            style={styles.input}
             type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Masukkan email"
-            style={styles.input}
             required
           />
-        </div>
 
-        <div style={styles.inputGroup}>
-          <label>Password</label>
           <input
+            style={styles.input}
             type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Masukkan password"
-            style={styles.input}
             required
           />
-        </div>
 
-        <button type="submit" style={styles.button}>
-          Login
-        </button>
-      </form>
+          <button type="submit" style={styles.button}>
+            Login
+          </button>
+
+          <p style={styles.text}>
+            Belum punya akun?
+            <Link to="/register" style={styles.link}>
+              {" "}
+              Register
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
 
-const styles: { [key: string]: React.CSSProperties } = {
+const styles: any = {
   container: {
     height: "100vh",
+    backgroundImage: `url(${bgImage})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    fontFamily: "sans-serif",
+  },
+  overlay: {
+    height: "100%",
+    background: "rgba(0,0,0,0.5)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(135deg, #667eea, #2fd129)",
-    fontFamily: "sans-serif",
   },
   card: {
     background: "#fff",
     padding: "40px",
-    borderRadius: "12px",
-    width: "350px",
-    boxShadow: "0px 10px 30px rgba(0,0,0,0.2)",
+    borderRadius: "14px",
+    width: "360px",
     display: "flex",
     flexDirection: "column",
     gap: "15px",
+    boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
   },
   title: {
-    margin: 0,
     textAlign: "center",
-  },
-  subtitle: {
-    marginTop: "-10px",
-    textAlign: "center",
-    color: "#666",
-    fontSize: "14px",
-  },
-  inputGroup: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "5px",
   },
   input: {
-    padding: "10px",
+    padding: "12px",
     borderRadius: "8px",
     border: "1px solid #ccc",
-    outline: "none",
     fontSize: "14px",
   },
   button: {
@@ -105,8 +119,23 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "none",
     background: "#667eea",
     color: "#fff",
-    fontSize: "16px",
+    fontWeight: "bold",
     cursor: "pointer",
-    marginTop: "10px",
+  },
+  text: {
+    textAlign: "center",
+    fontSize: "14px",
+  },
+  link: {
+    color: "#667eea",
+    fontWeight: "bold",
+    textDecoration: "none",
+  },
+  backBtn: {
+    alignSelf: "flex-start",
+    background: "transparent",
+    border: "none",
+    fontWeight: "bold",
+    cursor: "pointer",
   },
 };

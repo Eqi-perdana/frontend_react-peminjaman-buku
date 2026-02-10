@@ -6,21 +6,31 @@ export default function Home() {
     <div style={styles.container}>
       {/* Navbar */}
       <div style={styles.navbar}>
-        <h2 style={{ color: "#fff" }}>Aplikasi Perpustakaan</h2>
+        <h2 style={styles.logo}>📚 Aplikasi Perpustakaan</h2>
 
-        <Link to="/login" style={styles.loginBtn}>
-          Login
-        </Link>
+        <div style={styles.navButtons}>
+          <Link to="/login" style={styles.loginBtn}>
+            Login
+          </Link>
+
+          <Link to="/register" style={styles.registerBtn}>
+            Register
+          </Link>
+        </div>
       </div>
 
-      {/* Hero */}
+      {/* Hero Section */}
       <div style={styles.overlay}>
         <h1 style={styles.title}>
-          Selamat Datang di <span style={styles.highlight}>Aplikasi Peminjaman buku</span>
+          Selamat Datang di{" "}
+          <span style={styles.highlight}>
+            Aplikasi Peminjaman Buku
+          </span>
         </h1>
 
         <p style={styles.subtitle}>
-          Kelola data Anda dengan lebih mudah, cepat, dan aman bersama aplikasi ini.
+          Kelola data buku, peminjaman, dan anggota dengan lebih mudah,
+          cepat, dan aman menggunakan sistem digital modern.
         </p>
 
         <Link to="/login" style={styles.startBtn}>
@@ -49,13 +59,24 @@ const styles: any = {
     right: 0,
     display: "flex",
     justifyContent: "space-between",
-    padding: "20px 40px",
     alignItems: "center",
+    padding: "20px 40px",
+    zIndex: 2,
+  },
+
+  logo: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+
+  navButtons: {
+    display: "flex",
+    gap: "10px",
   },
 
   overlay: {
     height: "100%",
-    background: "rgba(0,0,0,0.45)",
+    background: "rgba(0,0,0,0.5)",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -66,9 +87,10 @@ const styles: any = {
   },
 
   title: {
-    fontSize: "42px",
+    fontSize: "44px",
     fontWeight: "bold",
     marginBottom: "20px",
+    maxWidth: "800px",
   },
 
   highlight: {
@@ -77,20 +99,32 @@ const styles: any = {
 
   subtitle: {
     fontSize: "18px",
-    marginBottom: "30px",
+    maxWidth: "600px",
+    lineHeight: "1.6",
+    marginBottom: "35px",
   },
 
   startBtn: {
-    padding: "14px 35px",
+    padding: "15px 35px",
     border: "2px solid #fff",
-    borderRadius: "8px",
+    borderRadius: "10px",
     color: "#fff",
     textDecoration: "none",
     fontSize: "16px",
+    fontWeight: "bold",
   },
 
   loginBtn: {
-    background: "#fff",
+    background: "#ffffff",
+    padding: "8px 18px",
+    borderRadius: "6px",
+    textDecoration: "none",
+    color: "#000",
+    fontWeight: "bold",
+  },
+
+  registerBtn: {
+    background: "#ffc107",
     padding: "8px 18px",
     borderRadius: "6px",
     textDecoration: "none",
