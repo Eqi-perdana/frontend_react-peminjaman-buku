@@ -1,21 +1,46 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../services/api";
 
 export default function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleRegister = async () => {
+    try {
+      const res = await api.post("/register", {
+        name,
+        email,
+        password,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      navigate("/dashboard");
+    } catch (err: any) {
+      alert("Register gagal");
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Register</h2>
+        <h1>Register</h1>
 
-        <input type="text" placeholder="Nama Lengkap" />
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
-        <input type="password" placeholder="Konfirmasi Password" />
+        <input placeholder="Nama" onChange={(e) => setName(e.target.value)} />
+        <input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-        <button>Register</button>
+        <button onClick={handleRegister}>Register</button>
 
-        <div className="auth-link">
+        <p>
           Sudah punya akun? <Link to="/">Login</Link>
-        </div>
+        </p>
       </div>
     </div>
   );
