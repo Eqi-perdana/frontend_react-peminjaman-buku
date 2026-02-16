@@ -129,12 +129,15 @@ const styles: any = {
   },
 
   backBtn: {
-    alignSelf: "flex-start",
-    background: "transparent",
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    padding: "8px 16px",
     border: "none",
-    color: "#667eea",
-    fontWeight: "bold",
+    borderRadius: "6px",
+    background: "#fff",
     cursor: "pointer",
+    fontWeight: "bold",
   },
 
   link: {

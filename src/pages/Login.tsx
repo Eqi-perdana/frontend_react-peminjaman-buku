@@ -17,37 +17,35 @@ export default function Login() {
         password,
       });
 
-      // simpan token
+      // simpan token & role
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("role", res.data.user.role);
 
-      alert("Login berhasil ✅");
-
-      // pindah ke dashboard
-      navigate("/dashboard");
+      // redirect berdasarkan role
+      if (res.data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/siswa");
+      }
     } catch (err) {
-      console.error(err);
-      alert("Login gagal ❌");
+      alert("Login gagal!");
     }
   };
 
   return (
     <div style={styles.container}>
+      <button onClick={() => navigate("/")} style={styles.backBtn}>
+        ← Kembali
+      </button>
+
       <div style={styles.overlay}>
         <form onSubmit={submit} style={styles.card}>
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            style={styles.backBtn}
-          >
-            ← Kembali
-          </button>
-
           <h1 style={styles.title}>Welcome Back 👋</h1>
 
           <input
             style={styles.input}
             type="email"
-            placeholder="Email"
+            placeholder="Masukkan Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -56,7 +54,7 @@ export default function Login() {
           <input
             style={styles.input}
             type="password"
-            placeholder="Password"
+            placeholder="Masukkan Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -67,9 +65,8 @@ export default function Login() {
           </button>
 
           <p style={styles.text}>
-            Belum punya akun?
+            Belum punya akun?{" "}
             <Link to="/register" style={styles.link}>
-              {" "}
               Register
             </Link>
           </p>
@@ -85,8 +82,22 @@ const styles: any = {
     backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
+    position: "relative",
     fontFamily: "sans-serif",
   },
+
+  backBtn: {
+    position: "absolute",
+    top: "20px",
+    left: "20px",
+    padding: "8px 16px",
+    border: "none",
+    borderRadius: "6px",
+    background: "#fff",
+    cursor: "pointer",
+    fontWeight: "bold",
+  },
+
   overlay: {
     height: "100%",
     background: "rgba(0,0,0,0.5)",
@@ -94,6 +105,7 @@ const styles: any = {
     justifyContent: "center",
     alignItems: "center",
   },
+
   card: {
     background: "#fff",
     padding: "40px",
@@ -104,15 +116,20 @@ const styles: any = {
     gap: "15px",
     boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
   },
+
   title: {
     textAlign: "center",
+    marginBottom: "10px",
   },
+
   input: {
     padding: "12px",
     borderRadius: "8px",
     border: "1px solid #ccc",
     fontSize: "14px",
+    outline: "none",
   },
+
   button: {
     padding: "12px",
     borderRadius: "8px",
@@ -122,20 +139,15 @@ const styles: any = {
     fontWeight: "bold",
     cursor: "pointer",
   },
+
   text: {
     textAlign: "center",
     fontSize: "14px",
   },
+
   link: {
     color: "#667eea",
     fontWeight: "bold",
     textDecoration: "none",
-  },
-  backBtn: {
-    alignSelf: "flex-start",
-    background: "transparent",
-    border: "none",
-    fontWeight: "bold",
-    cursor: "pointer",
   },
 };
