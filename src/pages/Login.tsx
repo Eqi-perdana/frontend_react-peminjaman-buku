@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import "./Login.css";
 import bgImage from "../assets/buku.jpg";
 
 export default function Login() {
@@ -17,33 +18,36 @@ export default function Login() {
         password,
       });
 
-      // simpan token & role
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.user.role);
 
-      // redirect berdasarkan role
       if (res.data.user.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/siswa");
       }
-    } catch (err) {
+    } catch {
       alert("Login gagal!");
     }
   };
 
   return (
-    <div style={styles.container}>
-      <button onClick={() => navigate("/")} style={styles.backBtn}>
+    <div
+      className="login-container"
+      style={{ backgroundImage: `url(${bgImage})` }}
+    >
+      <div className="login-overlay"></div>
+
+      <button onClick={() => navigate("/")} className="back-btn">
         ← Kembali
       </button>
 
-      <div style={styles.overlay}>
-        <form onSubmit={submit} style={styles.card}>
-          <h1 style={styles.title}>Welcome Back 👋</h1>
+      <div className="login-content">
+        <form onSubmit={submit} className="login-card">
+          <h1 className="login-title">Welcome Back 👋</h1>
 
           <input
-            style={styles.input}
+            className="login-input"
             type="email"
             placeholder="Masukkan Email"
             value={email}
@@ -52,7 +56,7 @@ export default function Login() {
           />
 
           <input
-            style={styles.input}
+            className="login-input"
             type="password"
             placeholder="Masukkan Password"
             value={password}
@@ -60,13 +64,13 @@ export default function Login() {
             required
           />
 
-          <button type="submit" style={styles.button}>
+          <button type="submit" className="login-button">
             Login
           </button>
 
-          <p style={styles.text}>
+          <p className="login-text">
             Belum punya akun?{" "}
-            <Link to="/register" style={styles.link}>
+            <Link to="/register" className="login-link">
               Register
             </Link>
           </p>
@@ -76,78 +80,3 @@ export default function Login() {
   );
 }
 
-const styles: any = {
-  container: {
-    height: "100vh",
-    backgroundImage: `url(${bgImage})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    position: "relative",
-    fontFamily: "sans-serif",
-  },
-
-  backBtn: {
-    position: "absolute",
-    top: "20px",
-    left: "20px",
-    padding: "8px 16px",
-    border: "none",
-    borderRadius: "6px",
-    background: "#fff",
-    cursor: "pointer",
-    fontWeight: "bold",
-  },
-
-  overlay: {
-    height: "100%",
-    background: "rgba(0,0,0,0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-
-  card: {
-    background: "#fff",
-    padding: "40px",
-    borderRadius: "14px",
-    width: "360px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-    boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
-  },
-
-  title: {
-    textAlign: "center",
-    marginBottom: "10px",
-  },
-
-  input: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
-    outline: "none",
-  },
-
-  button: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "none",
-    background: "#667eea",
-    color: "#fff",
-    fontWeight: "bold",
-    cursor: "pointer",
-  },
-
-  text: {
-    textAlign: "center",
-    fontSize: "14px",
-  },
-
-  link: {
-    color: "#667eea",
-    fontWeight: "bold",
-    textDecoration: "none",
-  },
-};
