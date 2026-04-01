@@ -5,6 +5,7 @@ import Register from "./pages/Register";
 import AdminDashboard from "./pages/AdminDashboard";
 import SiswaDashboard from "./pages/SiswaDashboard";
 import RoleRoute from "./components/RoleRoute";
+import Buku from "./pages/admin/Books";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           </RoleRoute>
         }
       />
+      <Route path="/admin/Books" element={<Buku />} />
 
       <Route
         path="/siswa"

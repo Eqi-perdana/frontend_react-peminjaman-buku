@@ -103,13 +103,22 @@ export default function AdminDashboard() {
       <div style={styles.sidebar}>
         <div>
           <h2>📚 Admin Panel</h2>
-          <p style={{ fontSize: "14px", opacity: 0.8 }}>Halo, saya eqi {name}</p>
+          <p style={{ fontSize: "14px", opacity: 0.8 }}>
+            Halo, saya eqi {name}
+          </p>
 
           <ul style={styles.menu}>
-            <li style={styles.activeMenu}>🏠 Dashboard</li>
-            <li style={styles.menuItem}>📖 Kelola Buku</li>
-            <li style={styles.menuItem}>👨‍🎓 Data Siswa</li>
-            <li style={styles.menuItem}>📅 Peminjaman</li>
+            <li style={styles.activeMenu} onClick={() => navigate("/admin")}>
+              🏠 Dashboard
+            </li>
+
+            <li style={styles.menuItem} onClick={() => navigate("/admin/Book")}>
+              📚 Kelola Buku
+            </li>
+
+            <li style={styles.menuItem} onClick={() => navigate("/siswa")}>
+              👨‍🎓 Data Siswa
+            </li>
           </ul>
         </div>
 
