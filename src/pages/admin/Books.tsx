@@ -5,8 +5,9 @@ import {
   updateBook,
   deleteBook,
 } from "../../services/bookApi";
+import "./Books.css";
 
-interface Books {
+interface Book {
   id?: number;
   title: string;
   author: string;
@@ -16,26 +17,30 @@ interface Books {
 }
 
 export default function Books() {
-  const [books, setBooks] = useState<Books[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const [form, setForm] = useState<Books>({
+  const initialForm: Book = {
     title: "",
     author: "",
     publisher: "",
     year: new Date().getFullYear(),
     stock: 0,
-  });
+  };
 
+  const [form, setForm] = useState<Book>(initialForm);
   const [editId, setEditId] = useState<number | null>(null);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const res = await getBooks();
-      setBooks(res.data);
-    } catch (err) {
-      console.error(err);
+      // Pastikan mengambil res.data.data jika Laravel kamu menggunakan resource/pagination
+      const data = Array.isArray(res.data) ? res.data : res.data.data || [];
+      setBooks(data);
+    } catch (err: any) {
+      console.error("Gagal mengambil data:", err);
     } finally {
       setLoading(false);
     }
@@ -45,137 +50,203 @@ export default function Books() {
     fetchData();
   }, []);
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validasi sederhana di Frontend
+    if (!form.title || !form.author) {
+      alert("Judul dan Penulis wajib diisi!");
+      return;
+    }
+
     try {
+      setSubmitting(true);
       if (editId) {
         await updateBook(editId, form);
+        alert("Buku berhasil diperbarui!");
       } else {
         await createBook(form);
+        alert("Buku berhasil ditambahkan!");
       }
 
-      setForm({
-        title: "",
-        author: "",
-        publisher: "",
-        year: new Date().getFullYear(),
-        stock: 0,
-      });
-
+      setForm(initialForm);
       setEditId(null);
       fetchData();
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      // Menampilkan detail error dari server (Laravel)
+      const errorMsg =
+        err.response?.data?.message || "Terjadi kesalahan pada server";
+      alert("Gagal menyimpan: " + errorMsg);
+      console.error("Detail Error:", err.response?.data);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleEdit = (b: Books) => {
-    setForm(b);
+  const handleEdit = (b: Book) => {
     setEditId(b.id!);
+    setForm({
+      title: b.title,
+      author: b.author,
+      publisher: b.publisher,
+      year: b.year,
+      stock: b.stock,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Hapus buku?")) return;
-    await deleteBook(id);
-    fetchData();
+    if (window.confirm("Apakah Anda yakin ingin menghapus buku ini?")) {
+      try {
+        await deleteBook(id);
+        fetchData();
+      } catch (err) {
+        alert("Gagal menghapus buku");
+      }
+    }
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>📚 Data Buku</h1>
+    <div className="books-container">
+      <h1 className="books-title">Library Management</h1>
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input
-          style={styles.input}
-          placeholder="Judul Buku"
-          value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
-        />
+      <div className="card">
+        <h3>{editId ? "📝 Edit Buku" : "➕ Tambah Buku Baru"}</h3>
+        <form onSubmit={handleSubmit} className="form-grid">
+          <div className="input-group">
+            <label htmlFor="title">Book Title</label>
+            <input
+              id="title"
+              className="input-field"
+              value={form.title}
+              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              placeholder="Contoh: Laskar Pelangi"
+              required
+            />
+          </div>
 
-        <input
-          style={styles.input}
-          placeholder="Penulis"
-          value={form.author}
-          onChange={(e) => setForm({ ...form, author: e.target.value })}
-        />
+          <div className="input-group">
+            <label htmlFor="author">Author</label>
+            <input
+              id="author"
+              className="input-field"
+              value={form.author}
+              onChange={(e) => setForm({ ...form, author: e.target.value })}
+              placeholder="Nama penulis"
+              required
+            />
+          </div>
 
-        <input
-          style={styles.input}
-          placeholder="Penerbit"
-          value={form.publisher}
-          onChange={(e) => setForm({ ...form, publisher: e.target.value })}
-        />
+          <div className="input-group">
+            <label htmlFor="publisher">Publisher</label>
+            <input
+              id="publisher"
+              className="input-field"
+              value={form.publisher}
+              onChange={(e) => setForm({ ...form, publisher: e.target.value })}
+              placeholder="Nama penerbit"
+            />
+          </div>
 
-        <input
-          style={styles.input}
-          type="number"
-          placeholder="Tahun"
-          value={form.year}
-          onChange={(e) => setForm({ ...form, year: Number(e.target.value) })}
-        />
+          <div className="input-group">
+            <label htmlFor="year">Year</label>
+            <input
+              id="year"
+              type="number"
+              className="input-field"
+              value={form.year}
+              onChange={(e) =>
+                setForm({ ...form, year: Number(e.target.value) })
+              }
+            />
+          </div>
 
-        <input
-          style={styles.input}
-          type="number"
-          placeholder="Stok"
-          value={form.stock}
-          onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-        />
+          <div className="input-group">
+            <label htmlFor="stock">Stock</label>
+            <input
+              id="stock"
+              type="number"
+              className="input-field"
+              value={form.stock}
+              onChange={(e) =>
+                setForm({ ...form, stock: Number(e.target.value) })
+              }
+            />
+          </div>
 
-        <button style={styles.button}>{editId ? "Update" : "Tambah"}</button>
-      </form>
+          <div style={{ gridColumn: "1/-1", marginTop: "10px" }}>
+            <button type="submit" disabled={submitting} className="btn-primary">
+              {submitting
+                ? "⏳ Menyimpan..."
+                : editId
+                  ? "Update Buku"
+                  : "Simpan Buku"}
+            </button>
+            {editId && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditId(null);
+                  setForm(initialForm);
+                }}
+                className="btn-secondary"
+              >
+                Batal
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
 
-      {/* TABLE */}
-      <div style={styles.tableWrapper}>
+      <div className="table-card">
         {loading ? (
-          <p>Loading...</p>
+          <p style={{ padding: "20px", textAlign: "center" }}>
+            Memuat data buku...
+          </p>
         ) : (
-          <table style={styles.table}>
+          <table className="books-table">
             <thead>
               <tr>
-                <th>No</th>
-                <th>Judul</th>
-                <th>Penulis</th>
-                <th>Penerbit</th>
-                <th>Tahun</th>
-                <th>Stok</th>
-                <th>Aksi</th>
+                <th className="th-field">Title</th>
+                <th className="th-field">Author</th>
+                <th className="th-field">Stock</th>
+                <th className="th-field" style={{ textAlign: "center" }}>
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {books.length === 0 ? (
-                <tr>
-                  <td colSpan={7} style={{ textAlign: "center" }}>
-                    Tidak ada data
-                  </td>
-                </tr>
-              ) : (
-                books.map((b, i) => (
+              {books.length > 0 ? (
+                books.map((b) => (
                   <tr key={b.id}>
-                    <td>{i + 1}</td>
-                    <td>{b.title}</td>
-                    <td>{b.author}</td>
-                    <td>{b.publisher}</td>
-                    <td>{b.year}</td>
-                    <td>{b.stock}</td>
-                    <td>
+                    <td className="td-field">{b.title}</td>
+                    <td className="td-field">{b.author}</td>
+                    <td className="td-field">{b.stock}</td>
+                    <td className="td-field" style={{ textAlign: "center" }}>
                       <button
-                        style={styles.editBtn}
                         onClick={() => handleEdit(b)}
+                        className="btn-edit"
                       >
                         Edit
                       </button>
                       <button
-                        style={styles.deleteBtn}
-                        onClick={() => handleDelete(b.id!)}
+                        onClick={() => b.id && handleDelete(b.id)}
+                        className="btn-delete"
                       >
-                        Hapus
+                        Delete
                       </button>
                     </td>
                   </tr>
                 ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={4}
+                    style={{ textAlign: "center", padding: "20px" }}
+                  >
+                    Tidak ada data buku.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
@@ -184,60 +255,3 @@ export default function Books() {
     </div>
   );
 }
-
-/* STYLE */
-const styles: any = {
-  container: {
-    padding: "30px",
-    background: "#f1f5f9",
-    minHeight: "100vh",
-  },
-  title: {
-    marginBottom: "20px",
-  },
-  form: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-    gap: "10px",
-    marginBottom: "20px",
-  },
-  input: {
-    padding: "10px",
-    borderRadius: "6px",
-    border: "1px solid #ccc",
-  },
-  button: {
-    background: "#3b82f6",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer",
-  },
-  tableWrapper: {
-    background: "#fff",
-    borderRadius: "10px",
-    padding: "15px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-  },
-  table: {
-    width: "100%",
-    borderCollapse: "collapse",
-  },
-  editBtn: {
-    background: "#22c55e",
-    color: "#fff",
-    border: "none",
-    padding: "5px 10px",
-    marginRight: "5px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-  deleteBtn: {
-    background: "#ef4444",
-    color: "#fff",
-    border: "none",
-    padding: "5px 10px",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
-};

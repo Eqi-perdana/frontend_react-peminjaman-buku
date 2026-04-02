@@ -5,10 +5,8 @@ import bgImage from "../assets/buku.jpg";
 export default function Home() {
   return (
     <div className="container" style={{ backgroundImage: `url(${bgImage})` }}>
-      {/* Overlay */}
       <div className="overlay"></div>
 
-      {/* Content */}
       <div className="content">
         {/* Navbar */}
         <header className="navbar">
@@ -26,19 +24,21 @@ export default function Home() {
 
         {/* Hero */}
         <section className="hero">
-          <h2 className="title">
-            Selamat Datang di <br />
-            <span>Aplikasi Peminjaman Buku</span>
-          </h2>
+          <div className="hero-box">
+            <h2 className="title">
+              Selamat Datang di <br />
+              <span>Aplikasi Peminjaman Buku</span>
+            </h2>
 
-          <p className="subtitle">
-            Kelola buku, anggota, dan peminjaman dengan sistem digital modern,
-            cepat, dan efisien.
-          </p>
+            <p className="subtitle">
+              Kelola buku, anggota, dan peminjaman dengan sistem digital modern,
+              cepat, dan efisien.
+            </p>
 
-          <Link to="/login" className="start-btn">
-            Mulai Sekarang →
-          </Link>
+            <Link to="/login" className="start-btn">
+              Mulai Sekarang →
+            </Link>
+          </div>
         </section>
 
         {/* Features */}

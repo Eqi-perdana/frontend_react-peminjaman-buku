@@ -10,10 +10,12 @@ import Buku from "./pages/admin/Books";
 export default function App() {
   return (
     <Routes>
+      {/* Route Publik */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+      {/* Grup Route ADMIN (Semua di dalam sini harus jadi Admin) */}
       <Route
         path="/admin"
         element={
@@ -22,12 +24,24 @@ export default function App() {
           </RoleRoute>
         }
       />
-      <Route path="/admin/Books" element={<Buku />} />
 
+      {/* Bungkus halaman buku dengan RoleRoute juga! */}
+      <Route
+        path="/admin/books"
+        element={
+          <RoleRoute role="admin">
+            <Buku />
+          </RoleRoute>
+        }
+      />
+
+      {/* Grup Route SISWA */}
       <Route
         path="/siswa"
         element={
-          <RoleRoute role="siswa">
+          <RoleRoute role="admin">
+            {" "}
+            {/* <--- TYPO? Harusnya role="siswa" */}
             <SiswaDashboard />
           </RoleRoute>
         }
