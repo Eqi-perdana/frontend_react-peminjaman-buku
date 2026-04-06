@@ -15,7 +15,7 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-      {/* Grup Route ADMIN (Semua di dalam sini harus jadi Admin) */}
+      {/* Grup Route ADMIN */}
       <Route
         path="/admin"
         element={
@@ -25,7 +25,6 @@ export default function App() {
         }
       />
 
-      {/* Bungkus halaman buku dengan RoleRoute juga! */}
       <Route
         path="/admin/books"
         element={
@@ -35,13 +34,11 @@ export default function App() {
         }
       />
 
-      {/* Grup Route SISWA */}
+      {/* Grup Route SISWA - PERBAIKAN: role="siswa" */}
       <Route
         path="/siswa"
         element={
-          <RoleRoute role="admin">
-            {" "}
-            {/* <--- TYPO? Harusnya role="siswa" */}
+          <RoleRoute role="siswa">
             <SiswaDashboard />
           </RoleRoute>
         }

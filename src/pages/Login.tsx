@@ -8,6 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // Di dalam fungsi submit pada Login.tsx
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -15,31 +16,41 @@ export default function Login() {
         email,
         password,
       });
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("role", res.data.user.role);
 
-      if (res.data.user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/siswa");
+      // DEBUG: Cek isi data di console (Tekan F12 di browser)
+      console.log("Response Backend:", res.data);
+
+      const userData = res.data.user;
+      const token = res.data.token;
+
+      if (token && userData) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", userData.role);
+        localStorage.setItem("name", userData.name);
+
+        // Pastikan string "admin" sama persis (case sensitive)
+        if (userData.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/siswa");
+        }
       }
-    } catch {
+    } catch (error) {
+      console.error("Login Error:", error);
       alert("Login gagal! Periksa kembali akun Anda.");
     }
   };
 
   return (
-    <div style={s.container}>
-      {/* CSS Injection untuk Hover & Glass Effect */}
+    <div style={{ ...s.container, backgroundImage: `url(${bgImage})` }}>
       <style>{`
         .login-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
         .login-input:focus { border-color: #60a5fa; background: rgba(255, 255, 255, 0.15); outline: none; }
         .btn-primary:hover { background: #4338ca; transform: scale(1.02); }
         .back-btn:hover { background: white; color: black; }
       `}</style>
-
       <div style={s.overlay}></div>
-
+      // Di dalam Login.tsx
       <button
         onClick={() => navigate("/")}
         className="back-btn"
@@ -47,7 +58,6 @@ export default function Login() {
       >
         ← Kembali
       </button>
-
       <div style={s.content}>
         <form onSubmit={submit} className="login-card" style={s.card}>
           <div style={{ textAlign: "center", marginBottom: "30px" }}>
@@ -101,7 +111,6 @@ const s: Record<string, React.CSSProperties> = {
   container: {
     height: "100vh",
     width: "100%",
-    backgroundImage: `url(${bgImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     display: "flex",
@@ -115,7 +124,6 @@ const s: Record<string, React.CSSProperties> = {
     inset: 0,
     background: "rgba(15, 23, 42, 0.75)",
     backdropFilter: "blur(8px)",
-    WebkitBackdropFilter: "blur(8px)",
   },
   backBtn: {
     position: "absolute",
@@ -140,7 +148,6 @@ const s: Record<string, React.CSSProperties> = {
   card: {
     background: "rgba(255, 255, 255, 0.1)",
     backdropFilter: "blur(16px)",
-    WebkitBackdropFilter: "blur(16px)",
     border: "1px solid rgba(255, 255, 255, 0.2)",
     padding: "40px",
     borderRadius: "24px",
@@ -164,7 +171,6 @@ const s: Record<string, React.CSSProperties> = {
     borderRadius: "12px",
     color: "white",
     fontSize: "15px",
-    transition: "0.3s",
   },
   button: {
     width: "100%",
@@ -175,8 +181,6 @@ const s: Record<string, React.CSSProperties> = {
     borderRadius: "12px",
     fontWeight: "bold",
     cursor: "pointer",
-    marginTop: "10px",
-    transition: "0.3s",
   },
   footerText: {
     textAlign: "center",
